@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏮 Panel de Control — Oriental Express</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🏮</div>
+                <h2>Oriental<br>Express</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/" class="nav-item active">
+                    <span class="material-icons">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/editor.html" class="nav-item">
+                    <span class="material-icons">edit_note</span>
+                    <span>Editor Mensajes</span>
+                </a>
+                <a href="#" onclick="actualizarEstado()" class="nav-item">
+                    <span class="material-icons">sync</span>
+                    <span>Actualizar Estado</span>
+                </a>
+
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Acciones</div>
+
+                <a href="#" onclick="forzarReconexion()" class="nav-item warning">
+                    <span class="material-icons">power_settings_new</span>
+                    <span>Reconectar</span>
+                </a>
+                <a href="#" onclick="cerrarSesion()" class="nav-item warning">
+                    <span class="material-icons">logout</span>
+                    <span>Cerrar Sesión</span>
+                </a>
+                <a href="#" onclick="limpiarSesion()" class="nav-item danger">
+                    <span class="material-icons">delete_forever</span>
+                    <span>Restaurar Todo</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">👤</div>
+                    <div class="user-details">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Restaurante</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="header-toggle">
+                    <span class="material-icons">menu</span>
+                </div>
+                <div class="header-title">
+                    <h1>Panel de Control</h1>
+                    <span class="status-indicator" id="headerStatus">Bot de WhatsApp</span>
+                </div>
+                <div class="header-actions">
+                    <span class="date-display">📅 Hoy</span>
+                </div>
+            </header>
+
+            <!-- Alert Container (required by api.js mostrarAlerta) -->
+            <div id="alertContainer"></div>
+
+            <!-- Metrics Cards -->
+            <div class="stats-grid">
+                <!-- Card 1: Estado -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <span class="material-icons">sensors</span>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Estado del Bot</h3>
+                        <div id="status" class="status-badge status-desconectado">Desconectado</div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Mensajes -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <span class="material-icons">chat</span>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Mensajes Procesados</h3>
+                        <span id="mensajes" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Empresa -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <span class="material-icons">store</span>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Empresa</h3>
+                        <span id="empresa" class="stat-value text-small">-</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Cooldown -->
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <span class="material-icons">timer</span>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Cooldown Global</h3>
+                        <div class="stat-row">
+                            <span id="cooldown" class="stat-value">-</span>
+                            <span class="stat-sub">min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="dashboard-content-grid">
+                <!-- QR Section -->
+                <div class="content-card qr-card">
+                    <div class="card-header">
+                        <h2>
+                            <span class="material-icons text-gold">qr_code_2</span>
+                            Conexión WhatsApp
+                        </h2>
+                        <span id="miNumero" class="text-gold font-bold">-</span>
+                    </div>
+                    <div class="card-body centered">
+                        <div class="qr-wrapper">
+                            <div id="qrcode">
+                                <div class="qr-placeholder">
+                                    <div class="spinner"></div>
+                                    <p>Esperando código QR...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="qr-instructions">Escanea con tu WhatsApp para conectar el bot</p>
+                    </div>
+                </div>
+
+                <!-- Cooldown Users -->
+                <div class="content-card users-card">
+                    <div class="card-header">
+                        <h2>
+                            <span class="material-icons text-gold">block</span>
+                            Usuarios Bloqueados
+                        </h2>
+                        <button class="btn-icon" onclick="resetearTodosCooldowns()" title="Resetear Todos">
+                            <span class="material-icons">refresh</span>
+                        </button>
+                    </div>
+                    <div class="card-body" id="usersList">
+                        <div class="empty-state">
+                            <span class="material-icons"
+                                style="font-size: 3em; color: var(--glass-border); display: block; margin-bottom: 10px;">sentiment_satisfied</span>
+                            No hay usuarios en cooldown
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs -->
+                <div class="content-card logs-card">
+                    <div class="card-header">
+                        <h2>
+                            <span class="material-icons text-gold">terminal</span>
+                            Logs del Sistema
+                        </h2>
+                        <button class="btn-text" onclick="limpiarLogs()">Limpiar Console</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="log-container" id="logs">
+                            <div class="log-entry system">Sistema iniciado... esperando conexión...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts externos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/qr.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- UI Logic for Sidebar Toggle -->
+    <script>
+        document.querySelector('.header-toggle').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active'); // Used for desktop visible toggle if needed? No, mobile mainly
+
+            // For mobile bottom nav, we might not need toggle, but if we do...
+            if (window.innerWidth <= 768) {
+                // Mobile specific logic if sidebar needs to expand up
+            }
+        });
+    </script>
+</body>
+
+</html>

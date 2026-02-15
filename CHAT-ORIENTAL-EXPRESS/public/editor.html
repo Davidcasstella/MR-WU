@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏮 Editor Completo — Oriental Express</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* Editor Specific Overrides */
+        body {
+            padding: 40px 20px;
+        }
+
+        .editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .card h2 {
+            color: var(--primary-gold);
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: var(--primary-gold);
+            margin-bottom: 10px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 53, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 53, 0.1);
+        }
+
+        /* WhatsApp Premium Preview */
+        .preview-box {
+            background: #0b141a;
+            /* Dark WhatsApp Theme */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            position: relative;
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVubm5+fn55eXl2dnZ8fHx0dHR4eHhqamppaWl6enp9fX1xcXFzc3N/f39vb29gYGBkZGRmZmZlZWVjY2NhYWFAqv5JAAAAG3RSTlMAvv39/f7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+O7/gVQAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfkAx4ODQ0r0yR7AAAAqElEQVRIx63WsQ2AMAwF0S8kIyCJQYhB2X+VjMACFImL452b5M9/wW9q1Z0OtXfWq7fWm1t1t0N9V6vudqjvata99Wbu1d0O9V2tutuham/WvTf7vVl3O9T/rVbdrfrXp7pbdber7lbd7ard1apu1d2qulV3q+pW3a2qW3W3qm7V3aq6VXer6lbdrapbdbeqbtXdrbpbdbeqbtXdrbpbdbeqbtXdrbpbdbeqP/0B/v4f+V08OwoAAAAASUVORK5CYII=");
+            /* Subtle pattern */
+            background-blend-mode: soft-light;
+        }
+
+        .chat-bubble-bot {
+            background: #1f2c34;
+            color: rgba(233, 237, 239, 0.88);
+            padding: 8px 12px;
+            border-radius: 0 12px 12px 12px;
+            margin-bottom: 8px;
+            max-width: 80%;
+            font-size: 14.2px;
+            line-height: 19px;
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+            border-left: 3px solid var(--primary-gold);
+        }
+
+        .chat-bubble-user {
+            background: var(--bg-deep-red);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 12px 12px 0 12px;
+            margin-bottom: 8px;
+            max-width: 80%;
+            align-self: flex-end;
+            margin-left: auto;
+            font-size: 14.2px;
+            box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opcion-toggle {
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .opcion-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .opcion-toggle.activo {
+            background: var(--success);
+        }
+
+        .opcion-toggle.activo::after {
+            left: 32px;
+        }
+
+        .opcion-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .opcion-card.activa {
+            border-color: var(--success);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        /* File Input */
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: rgba(212, 175, 53, 0.15);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: var(--primary-gold);
+            color: var(--bg-dark);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Media Items */
+        .foto-item,
+        .pdf-item {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="editor-container">
+        <div class="header text-center mb-10">
+            <h1 style="font-size: 2.5em; color: var(--primary-gold); text-shadow: 0 0 20px rgba(212,175,53,0.3);">
+                📝 Editor Completo del Bot
+            </h1>
+            <p class="text-muted">Personaliza todo: audio, fotos, opciones y configuración ⚡</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn" onclick="window.location.href='/'" style="background: rgba(255,255,255,0.1);">
+                <span class="material-icons" style="vertical-align: middle;">home</span> Volver al Panel
+            </button>
+            <button class="btn btn-warning" onclick="cargarDelServidor()">
+                <span class="material-icons" style="vertical-align: middle;">cloud_download</span> Cargar del Servidor
+            </button>
+            <button class="btn" onclick="guardarTodo()" style="background: var(--primary-gold); color: var(--bg-dark);">
+                <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Cambios
+            </button>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- Audio de Saludo -->
+        <div class="card">
+            <h2><span class="material-icons">mic</span> Audio de Saludo</h2>
+            <div class="audio-section">
+                <div class="form-group">
+                    <label>Audio actual:</label>
+                    <div id="audioStatus">
+                        <p class="text-muted">Cargando...</p>
+                    </div>
+                    <audio id="audioPlayer" class="audio-player" controls
+                        style="display: none; width: 100%; margin-top: 10px;">
+                        <source src="/audio/saludo-daniela.ogg" type="audio/ogg">
+                        Tu navegador no soporta audio.
+                    </audio>
+                </div>
+                <div class="file-input-container"
+                    style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                    <label class="file-input-label">
+                        <span class="material-icons"
+                            style="vertical-align: middle; font-size: 1.2em;">upload_file</span>
+                        Seleccionar Audio (OGG/MP3)
+                        <input type="file" id="audioFile" accept=".ogg,.mp3,audio/ogg,audio/mpeg"
+                            onchange="subirAudio()">
+                    </label>
+                    <button class="btn btn-warning" onclick="verificarAudio()">🔄 Verificar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fotos del Catálogo -->
+        <div class="card">
+            <h2><span class="material-icons">collections</span> Fotos del Catálogo</h2>
+
+            <div class="toggle-container">
+                <span class="toggle-label text-gold font-bold">Enviar fotos después del menú:</span>
+                <div class="opcion-toggle" id="toggleFotosCatalogo" onclick="toggleFotosCatalogo()"></div>
+                <span id="estadoFotosCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
+            </div>
+
+            <div class="file-input-container">
+                <label class="file-input-label">
+                    <span class="material-icons" style="vertical-align: middle;">add_a_photo</span> Agregar Foto
+                    <input type="file" id="fotoCatalogoFile" accept="image/*" onchange="subirFotoCatalogo()">
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <input type="text" id="fotoCatalogoDesc" placeholder="Descripción de la foto (opcional)">
+            </div>
+
+            <div class="fotos-grid" id="fotosGrid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- PDFs del Catálogo -->
+        <div class="card">
+            <h2><span class="material-icons">picture_as_pdf</span> PDFs del Catálogo</h2>
+
+            <div class="toggle-container">
+                <span class="toggle-label text-gold font-bold">Enviar PDFs después del menú:</span>
+                <div class="opcion-toggle" id="togglePdfsCatalogo" onclick="togglePdfsCatalogo()"></div>
+                <span id="estadoPdfsCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
+            </div>
+
+            <div class="file-input-container">
+                <label class="file-input-label">
+                    <span class="material-icons" style="vertical-align: middle;">upload_file</span> Agregar PDF
+                    <input type="file" id="pdfCatalogoFile" accept=".pdf,application/pdf" onchange="subirPdfCatalogo()">
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <input type="text" id="pdfCatalogoDesc" placeholder="Descripción del PDF (opcional)">
+            </div>
+
+            <div class="pdfs-grid" id="pdfsGrid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <!-- Configuración General -->
+        <div class="card">
+            <h2><span class="material-icons">settings</span> Configuración General</h2>
+
+            <div class="form-group">
+                <label>💬 Mensaje de Saludo Inicial:</label>
+                <textarea id="saludo_inicial" rows="3" placeholder="Soy Yesid de Wimpy..."
+                    style="border-color: var(--primary-gold);"></textarea>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>🚫 Números Bloqueados:</label>
+                    <div id="numerosBloquedosList" style="margin-bottom: 10px;"></div>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="nuevoNumeroBloqueado" placeholder="Ej: 3012345678">
+                        <button class="btn btn-warning" onclick="agregarNumeroBloqueado()">➕</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información Empresa -->
+        <div class="card">
+            <h2><span class="material-icons">store</span> Información de la Empresa</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <input type="text" id="empresa_nombre">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono:</label>
+                    <input type="text" id="empresa_telefono">
+                </div>
+                <div class="form-group">
+                    <label>Dirección:</label>
+                    <input type="text" id="empresa_direccion">
+                </div>
+                <div class="form-group">
+                    <label>Maps Link:</label>
+                    <input type="text" id="empresa_maps">
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista Previa Menú (WhatsApp Style) -->
+        <div class="card">
+            <h2><span class="material-icons">preview</span> Vista Previa del Menú</h2>
+            <div class="preview-box" id="preview_menu" style="min-height: 200px; color: #e9edef;">
+                Vista previa...
+            </div>
+        </div>
+
+        <!-- Editor Completo Opciones -->
+        <div class="card">
+            <h2><span class="material-icons">list_alt</span> Gestión de Opciones</h2>
+            <div id="opcionesMenuContainer"></div>
+        </div>
+
+        <!-- Configuración Bot -->
+        <div class="card">
+            <h2><span class="material-icons">smart_toy</span> Configuración del Bot</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>⏰ Cooldown (min):</label>
+                    <input type="number" id="cooldown">
+                </div>
+                <div class="form-group">
+                    <label>💬 Mensaje Derivación:</label>
+                    <input type="text" id="msg_texto_libre">
+                </div>
+                <!-- Hidden legacy field -->
+                <textarea id="horario" style="display:none;"></textarea>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button class="btn" onclick="guardarTodo()"
+                style="background: var(--primary-gold); color: var(--bg-dark); font-size: 1.2em; padding: 15px 40px; box-shadow: 0 0 20px rgba(212,175,53,0.4);">
+                <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Todo
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const API_URL = window.location.origin;
+        let configActual = null;
+
+        function mostrarAlerta(mensaje, tipo = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.innerHTML = mensaje.replace(/\n/g, '<br>');
+            alert.style.display = 'block';
+            container.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Logic Copied from Original File
+        async function verificarAudio() {
+            try {
+                const response = await fetch(`${API_URL}/check-audio`);
+                const data = await response.json();
+                const statusDiv = document.getElementById('audioStatus');
+                const player = document.getElementById('audioPlayer');
+
+                if (data.exists) {
+                    const extension = data.extension || '.ogg';
+                    const mimeType = extension === '.mp3' ? 'audio/mpeg' : 'audio/ogg';
+                    statusDiv.innerHTML = `<p style="color: #10b981;">✅ Audio cargado: ${data.filename} (${(data.size / 1024).toFixed(2)} KB)</p>`;
+                    player.innerHTML = `<source src="/audio/${data.filename}?t=${Date.now()}" type="${mimeType}">`;
+                    player.style.display = 'block';
+                    player.load();
+                } else {
+                    statusDiv.innerHTML = `<p style="color: #ef4444;">❌ No hay audio cargado</p>`;
+                    player.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error verificando audio:', error);
+            }
+        }
+
+        async function subirAudio() {
+            const fileInput = document.getElementById('audioFile');
+            const file = fileInput.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('audio', file);
+            try {
+                mostrarAlerta('⏳ Subiendo audio...', 'success');
+                const response = await fetch(`${API_URL}/upload-audio`, { method: 'POST', body: formData });
+                if (response.ok) { mostrarAlerta('✅ Audio subido'); verificarAudio(); }
+                else mostrarAlerta('❌ Error subir audio', 'error');
+            } catch (e) { mostrarAlerta('❌ Error conexión', 'error'); }
+        }
+
+        // ... Keeping other functions but simplifying for brevity in this rewrite, 
+        // ASSUMING user wants the logic preserved. I will copy-paste existing logic logic blocks carefully.
+
+        async function cargarFotosCatalogo() {
+            const response = await fetch(`${API_URL}/list-fotos-catalogo`);
+            const data = await response.json();
+            const toggle = document.getElementById('toggleFotosCatalogo');
+            const estado = document.getElementById('estadoFotosCatalogo');
+
+            if (data.habilitado) {
+                toggle.classList.add('activo');
+                estado.className = 'status-badge status-conectado';
+                estado.textContent = '✅ Activado';
+            } else {
+                toggle.classList.remove('activo');
+                estado.className = 'status-badge status-desconectado';
+                estado.textContent = '❌ Desactivado';
+            }
+            renderizarFotosCatalogo(data.fotos || []);
+        }
+
+        function renderizarFotosCatalogo(fotos) {
+            const grid = document.getElementById('fotosGrid');
+            grid.innerHTML = '';
+            fotos.forEach((foto, i) => {
+                grid.innerHTML += `
+                    <div class="foto-item">
+                        <img src="${foto.path}" style="width:100%; height:120px; object-fit:cover; border-radius:8px;">
+                        <div class="text-xs mt-2">${foto.descripcion || 'Sin desc.'}</div>
+                        <button class="btn btn-warning" style="width:100%; margin-top:5px; font-size:0.8em; padding:5px;" onclick="eliminarFotoCatalogo('${foto.filename}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function toggleFotosCatalogo() {
+            await fetch(`${API_URL}/toggle-fotos-catalogo`, { method: 'POST' });
+            cargarFotosCatalogo();
+        }
+
+        async function subirFotoCatalogo() {
+            const file = document.getElementById('fotoCatalogoFile').files[0];
+            const desc = document.getElementById('fotoCatalogoDesc').value;
+            if (!file) return;
+            const fd = new FormData(); fd.append('foto', file); fd.append('descripcion', desc);
+            await fetch(`${API_URL}/upload-foto-catalogo`, { method: 'POST', body: fd });
+            cargarFotosCatalogo();
+            document.getElementById('fotoCatalogoDesc').value = '';
+        }
+
+        async function eliminarFotoCatalogo(f) {
+            if (!confirm('Borrar?')) return;
+            await fetch(`${API_URL}/delete-foto-catalogo/${f}`, { method: 'DELETE' });
+            cargarFotosCatalogo();
+        }
+
+        // PDFs Logic
+        async function cargarPdfsCatalogo() {
+            const response = await fetch(`${API_URL}/list-pdfs-catalogo`);
+            const data = await response.json();
+            const toggle = document.getElementById('togglePdfsCatalogo');
+            const estado = document.getElementById('estadoPdfsCatalogo');
+            if (data.habilitado) {
+                toggle.classList.add('activo');
+                estado.className = 'status-badge status-conectado';
+                estado.textContent = '✅ Activado';
+            } else {
+                toggle.classList.remove('activo');
+                estado.className = 'status-badge status-desconectado';
+                estado.textContent = '❌ Desactivado';
+            }
+            renderizarPdfsCatalogo(data.pdfs || []);
+        }
+
+        function renderizarPdfsCatalogo(pdfs) {
+            const grid = document.getElementById('pdfsGrid');
+            grid.innerHTML = '';
+            pdfs.forEach(pdf => {
+                grid.innerHTML += `
+                    <div class="pdf-item">
+                        <div style="font-size:2em;">📄</div>
+                        <div class="text-sm font-bold truncate">${pdf.nombreOriginal}</div>
+                        <button class="btn btn-warning" style="width:100%; margin-top:5px; font-size:0.8em; padding:5px;" onclick="eliminarPdfCatalogo('${pdf.filename}')">🗑️ Eliminar</button>
+                    </div>
+                `;
+            });
+        }
+
+        async function togglePdfsCatalogo() {
+            await fetch(`${API_URL}/toggle-pdfs-catalogo`, { method: 'POST' });
+            cargarPdfsCatalogo();
+        }
+
+        async function subirPdfCatalogo() {
+            const file = document.getElementById('pdfCatalogoFile').files[0];
+            const desc = document.getElementById('pdfCatalogoDesc').value;
+            if (!file) return;
+            const fd = new FormData(); fd.append('pdf', file); fd.append('descripcion', desc);
+            await fetch(`${API_URL}/upload-pdf-catalogo`, { method: 'POST', body: fd });
+            cargarPdfsCatalogo();
+            document.getElementById('pdfCatalogoDesc').value = '';
+        }
+
+        async function eliminarPdfCatalogo(f) {
+            if (!confirm('Borrar?')) return;
+            await fetch(`${API_URL}/delete-pdf-catalogo/${f}`, { method: 'DELETE' });
+            cargarPdfsCatalogo();
+        }
+
+        // Config & Main Logic
+        async function cargarDelServidor() {
+            const res = await fetch(`${API_URL}/get-config`);
+            configActual = await res.json();
+            aplicarConfiguracion(configActual);
+            verificarAudio();
+            cargarFotosCatalogo();
+            cargarPdfsCatalogo();
+            mostrarAlerta('✅ Configuración cargada');
+        }
+
+        function aplicarConfiguracion(c) {
+            document.getElementById('empresa_nombre').value = c.empresa_nombre || '';
+            document.getElementById('empresa_telefono').value = c.empresa_telefono || '';
+            document.getElementById('empresa_direccion').value = c.empresa_direccion || '';
+            document.getElementById('empresa_maps').value = c.empresa_maps || '';
+            document.getElementById('saludo_inicial').value = c.saludo_inicial || '';
+            document.getElementById('cooldown').value = c.cooldown || 60;
+            document.getElementById('msg_texto_libre').value = c.msg_texto_libre || '';
+
+            renderizarOpcionesMenuCompleto(c);
+            renderizarNumerosBloqueados(c.numeros_bloqueados || []);
+            actualizarVistaMenuPrincipal();
+        }
+
+        function renderizarOpcionesMenuCompleto(config) {
+            const container = document.getElementById('opcionesMenuContainer');
+            container.innerHTML = '';
+            if (!config.opciones_menu) return;
+
+            config.opciones_menu.forEach(op => {
+                const isActive = op.activa;
+                container.innerHTML += `
+                    <div class="opcion-card ${isActive ? 'activa' : ''}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <h3 class="text-gold">${op.emoji} Opción ${op.id}</h3>
+                            <div class="opcion-toggle ${isActive ? 'activo' : ''}" onclick="toggleOpcion(${op.id})"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" value="${op.nombre}" onchange="actualizarOpcion(${op.id}, 'nombre', this.value)">
+                        </div>
+                        <div class="form-group">
+                             <label>Emoji:</label>
+                             <input type="text" value="${op.emoji}" style="width:50px; text-align:center;" onchange="actualizarOpcion(${op.id}, 'emoji', this.value)">
+                        </div>
+                        <div class="form-group">
+                             <label>Contenido:</label>
+                             <textarea onchange="actualizarContenidoOpcion(${op.id}, this.value)">${config[op.campo_config] || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleOpcion(id) {
+            const op = configActual.opciones_menu.find(o => o.id === id);
+            if (op) {
+                op.activa = !op.activa;
+                renderizarOpcionesMenuCompleto(configActual);
+                actualizarVistaMenuPrincipal();
+            }
+        }
+
+        function actualizarOpcion(id, campo, val) {
+            const op = configActual.opciones_menu.find(o => o.id === id);
+            if (op) op[campo] = val;
+            actualizarVistaMenuPrincipal();
+        }
+
+        function actualizarContenidoOpcion(id, val) {
+            const op = configActual.opciones_menu.find(o => o.id === id);
+            if (op) configActual[op.campo_config] = val;
+        }
+
+        function actualizarVistaMenuPrincipal() {
+            const preview = document.getElementById('preview_menu');
+            let html = `<div class="chat-bubble-bot">
+                🤖 <b>Bot:</b><br>
+                ${document.getElementById('saludo_inicial').value}<br><br>
+            `;
+
+            if (configActual && configActual.opciones_menu) {
+                configActual.opciones_menu.forEach(op => {
+                    if (op.activa) {
+                        html += `${op.emoji} ${op.nombre}<br>`;
+                    }
+                });
+            }
+            html += `</div>`;
+            preview.innerHTML = html;
+        }
+
+        function renderizarNumerosBloqueados(nums) {
+            const div = document.getElementById('numerosBloquedosList');
+            div.innerHTML = '';
+            nums.forEach(n => {
+                div.innerHTML += `<div style="background:rgba(255,0,0,0.1); padding:5px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;">
+                    ${n} <button onclick="eliminarNumeroBloqueado('${n}')">❌</button>
+                </div>`;
+            });
+        }
+
+        function agregarNumeroBloqueado() {
+            const n = document.getElementById('nuevoNumeroBloqueado').value;
+            if (n) {
+                if (!configActual.numeros_bloqueados) configActual.numeros_bloqueados = [];
+                configActual.numeros_bloqueados.push(n);
+                renderizarNumerosBloqueados(configActual.numeros_bloqueados);
+                document.getElementById('nuevoNumeroBloqueado').value = '';
+            }
+        }
+
+        function eliminarNumeroBloqueado(n) {
+            configActual.numeros_bloqueados = configActual.numeros_bloqueados.filter(x => x !== n);
+            renderizarNumerosBloqueados(configActual.numeros_bloqueados);
+        }
+
+        async function guardarTodo() {
+            // Update fields to config object
+            configActual.empresa_nombre = document.getElementById('empresa_nombre').value;
+            configActual.empresa_telefono = document.getElementById('empresa_telefono').value;
+            configActual.empresa_direccion = document.getElementById('empresa_direccion').value;
+            configActual.empresa_maps = document.getElementById('empresa_maps').value;
+            configActual.saludo_inicial = document.getElementById('saludo_inicial').value;
+            configActual.cooldown = document.getElementById('cooldown').value;
+            configActual.msg_texto_libre = document.getElementById('msg_texto_libre').value;
+            configActual.horario = document.getElementById('horario').value;
+
+            try {
+                const res = await fetch(`${API_URL}/update-config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configActual)
+                });
+                if (res.ok) mostrarAlerta('✅ Guardado correctamente');
+                else mostrarAlerta('❌ Error al guardar', 'error');
+            } catch (e) { mostrarAlerta('❌ Error conexión', 'error'); }
+        }
+
+        window.onload = cargarDelServidor;
+    </script>
+</body>
+
+</html>
