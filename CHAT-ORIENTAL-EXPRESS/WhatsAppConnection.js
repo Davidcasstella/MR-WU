@@ -17,17 +17,17 @@ class WhatsAppConnection {
       console.log('⚠️ Ya hay una conexión en proceso...');
       return;
     }
-    
+
     if (this.isConnected) {
       console.log('⚠️ Ya está conectado a WhatsApp');
       return;
     }
-    
+
     this.isConnecting = true;
-    
+
     try {
       const { state, saveCreds } = await useMultiFileAuthState('auth_info');
-      
+
       this.sock = makeWASocket({
         auth: state,
         printQRInTerminal: false,
@@ -58,13 +58,13 @@ class WhatsAppConnection {
 
   async manejarActualizacionConexion(update) {
     const { connection, lastDisconnect, qr } = update;
-    
+
     if (qr) {
       this.qrCodeData = qr;
       console.log('\n📱 Código QR disponible en: http://localhost:3000');
       qrcode.generate(qr, { small: true });
     }
-    
+
     if (connection === 'close') {
       await this.manejarDesconexion(lastDisconnect);
     } else if (connection === 'open') {
@@ -75,13 +75,13 @@ class WhatsAppConnection {
   async manejarDesconexion(lastDisconnect) {
     const statusCode = lastDisconnect?.error?.output?.statusCode;
     const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-    
+
     console.log(`❌ Conexión cerrada. Status: ${statusCode}`);
     this.isConnected = false;
     this.isConnecting = false;
     this.qrCodeData = null;
     this.miNumero = null;
-    
+
     if (shouldReconnect) {
       console.log('🔄 Reconectando en 5 segundos...');
       setTimeout(() => this.conectar(), 5000);
@@ -93,7 +93,7 @@ class WhatsAppConnection {
 
   async manejarConexionExitosa() {
     console.log('✅ ¡Conectado a WhatsApp!');
-    
+
     try {
       const user = this.sock.user;
       if (user && user.id) {
@@ -103,7 +103,7 @@ class WhatsAppConnection {
     } catch (e) {
       console.log('⚠️ No se pudo obtener el número');
     }
-    
+
     console.log('🌐 Panel de control: http://localhost:3000');
     console.log('📝 Editor de mensajes: http://localhost:3000/editor.html\n');
     this.isConnected = true;
@@ -114,10 +114,16 @@ class WhatsAppConnection {
   async manejarMensajesEntrantes(m) {
     try {
       if (m.type !== 'notify') return;
-      
+
       const msg = m.messages[0];
       if (!msg.message) return;
-      
+
+      // Filtrar: solo procesar mensajes de chats individuales
+      const remoteJid = msg.key.remoteJid;
+      if (!remoteJid || !remoteJid.endsWith('@s.whatsapp.net')) {
+        return; // Ignora status@broadcast, grupos @g.us, y cualquier otro
+      }
+
       await this.messageProcessor.procesarMensaje(msg, this.miNumero);
     } catch (error) {
       console.error('❌ Error procesando mensaje:', error.message);

@@ -178,6 +178,27 @@ app.get('/status', (req, res) => {
 app.post('/update-config', (req, res) => {
   try {
     const newConfig = req.body;
+
+    // --- FIX: Preservar listas de archivos para evitar sobrescritura ---
+    // Recargamos la config para tener la última versión de los archivos subidos
+    configManager.recargarConfiguracion();
+    const currentConfig = configManager.obtenerConfig();
+
+    // 1. Preservar Fotos
+    if (!newConfig.fotos_catalogo) newConfig.fotos_catalogo = {};
+    if (currentConfig.fotos_catalogo && Array.isArray(currentConfig.fotos_catalogo.fotos)) {
+      newConfig.fotos_catalogo.fotos = currentConfig.fotos_catalogo.fotos;
+      console.log(`🛡️ Preservando ${newConfig.fotos_catalogo.fotos.length} fotos del catálogo`);
+    }
+
+    // 2. Preservar PDFs
+    if (!newConfig.pdfs_catalogo) newConfig.pdfs_catalogo = {};
+    if (currentConfig.pdfs_catalogo && Array.isArray(currentConfig.pdfs_catalogo.pdfs)) {
+      newConfig.pdfs_catalogo.pdfs = currentConfig.pdfs_catalogo.pdfs;
+      console.log(`🛡️ Preservando ${newConfig.pdfs_catalogo.pdfs.length} PDFs del catálogo`);
+    }
+    // ------------------------------------------------------------------
+
     const guardado = configManager.guardarConfiguracion(newConfig);
     
     if (guardado) {

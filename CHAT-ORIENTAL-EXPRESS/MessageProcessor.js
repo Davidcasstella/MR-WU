@@ -14,7 +14,8 @@ class MessageProcessor {
       const from = msg.key.remoteJid;
       const messageId = msg.key.id;
 
-      if (from === 'status@broadcast') return;
+      // Solo procesar chats individuales (segunda capa de defensa)
+      if (!from || !from.endsWith('@s.whatsapp.net')) return;
 
       // Validar que no sea mi propio número
       const remitente = from.split('@')[0];

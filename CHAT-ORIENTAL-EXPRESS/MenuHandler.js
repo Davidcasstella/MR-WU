@@ -68,6 +68,11 @@ class MenuHandler {
       for (const foto of fotos) {
         const rutaFoto = path.join(__dirname, 'imagenes', 'catalogo', foto.filename);
 
+        console.log(`🔍 Buscando foto: ${rutaFoto}`);
+        console.log(`   Filename en config: ${foto.filename}`);
+        console.log(`   __dirname: ${__dirname}`);
+        console.log(`   Existe: ${fs.existsSync(rutaFoto)}`);
+
         if (fs.existsSync(rutaFoto)) {
           const imageBuffer = fs.readFileSync(rutaFoto);
 
@@ -79,7 +84,7 @@ class MenuHandler {
           console.log(`  ✅ Foto enviada: ${foto.filename}`);
           await new Promise(resolve => setTimeout(resolve, 800));
         } else {
-          console.log(`  ⚠️ Foto no encontrada: ${foto.filename}`);
+          console.log(`  ⚠️ Foto no encontrada: ${foto.filename} en ruta ${rutaFoto}`);
         }
       }
 
