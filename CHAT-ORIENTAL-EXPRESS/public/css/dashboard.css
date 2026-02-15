@@ -217,6 +217,8 @@ body::before {
 /* === Main Content === */
 .dashboard-main {
     flex: 1;
+    min-width: 0;
+    /* Prevents flex overflow */
     margin-left: var(--sidebar-width);
     padding: 30px;
     padding-top: calc(var(--header-height) + 30px);
@@ -277,9 +279,21 @@ body::before {
 /* === Stats Grid === */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-bottom: 30px;
+}
+
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .stat-card {
@@ -360,7 +374,8 @@ body::before {
 /* === Content Grid === */
 .dashboard-content-grid {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    /* Prevents grid overflow */
     grid-template-rows: auto auto;
     gap: 24px;
 }
@@ -557,7 +572,8 @@ body::before {
 }
 
 /* === Responsive === */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
+    /* Increased breakpoint from 1024px */
 
     .qr-card,
     .users-card {

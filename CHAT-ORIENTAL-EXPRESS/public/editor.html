@@ -14,7 +14,9 @@
     <style>
         /* Editor Specific Overrides */
         body {
-            padding: 40px 20px;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .editor-container {
@@ -215,198 +217,281 @@
 </head>
 
 <body>
-    <div class="editor-container">
-        <div class="header text-center mb-10">
-            <h1 style="font-size: 2.5em; color: var(--primary-gold); text-shadow: 0 0 20px rgba(212,175,53,0.3);">
-                📝 Editor Completo del Bot
-            </h1>
-            <p class="text-muted">Personaliza todo: audio, fotos, opciones y configuración ⚡</p>
-        </div>
-
-        <div class="nav-buttons">
-            <button class="btn" onclick="window.location.href='/'" style="background: rgba(255,255,255,0.1);">
-                <span class="material-icons" style="vertical-align: middle;">home</span> Volver al Panel
-            </button>
-            <button class="btn btn-warning" onclick="cargarDelServidor()">
-                <span class="material-icons" style="vertical-align: middle;">cloud_download</span> Cargar del Servidor
-            </button>
-            <button class="btn" onclick="guardarTodo()" style="background: var(--primary-gold); color: var(--bg-dark);">
-                <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Cambios
-            </button>
-        </div>
-
-        <div id="alertContainer"></div>
-
-        <!-- Audio de Saludo -->
-        <div class="card">
-            <h2><span class="material-icons">mic</span> Audio de Saludo</h2>
-            <div class="audio-section">
-                <div class="form-group">
-                    <label>Audio actual:</label>
-                    <div id="audioStatus">
-                        <p class="text-muted">Cargando...</p>
-                    </div>
-                    <audio id="audioPlayer" class="audio-player" controls
-                        style="display: none; width: 100%; margin-top: 10px;">
-                        <source src="/audio/saludo-daniela.ogg" type="audio/ogg">
-                        Tu navegador no soporta audio.
-                    </audio>
-                </div>
-                <div class="file-input-container"
-                    style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-                    <label class="file-input-label">
-                        <span class="material-icons"
-                            style="vertical-align: middle; font-size: 1.2em;">upload_file</span>
-                        Seleccionar Audio (OGG/MP3)
-                        <input type="file" id="audioFile" accept=".ogg,.mp3,audio/ogg,audio/mpeg"
-                            onchange="subirAudio()">
-                    </label>
-                    <button class="btn btn-warning" onclick="verificarAudio()">🔄 Verificar</button>
-                </div>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">🏮</div>
+                <h2>Oriental<br>Express</h2>
             </div>
-        </div>
+            <nav class="sidebar-nav">
+                <a href="/" class="nav-item">
+                    <span class="material-icons">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/editor.html" class="nav-item active">
+                    <span class="material-icons">edit_note</span>
+                    <span>Editor Mensajes</span>
+                </a>
 
-        <!-- Fotos del Catálogo -->
-        <div class="card">
-            <h2><span class="material-icons">collections</span> Fotos del Catálogo</h2>
-
-            <div class="toggle-container">
-                <span class="toggle-label text-gold font-bold">Enviar fotos después del menú:</span>
-                <div class="opcion-toggle" id="toggleFotosCatalogo" onclick="toggleFotosCatalogo()"></div>
-                <span id="estadoFotosCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
-            </div>
-
-            <div class="file-input-container">
-                <label class="file-input-label">
-                    <span class="material-icons" style="vertical-align: middle;">add_a_photo</span> Agregar Foto
-                    <input type="file" id="fotoCatalogoFile" accept="image/*" onchange="subirFotoCatalogo()">
-                </label>
-            </div>
-
-            <div class="form-group" style="margin-top: 15px;">
-                <input type="text" id="fotoCatalogoDesc" placeholder="Descripción de la foto (opcional)">
-            </div>
-
-            <div class="fotos-grid" id="fotosGrid"
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
-                <!-- Filled by JS -->
-            </div>
-        </div>
-
-        <!-- PDFs del Catálogo -->
-        <div class="card">
-            <h2><span class="material-icons">picture_as_pdf</span> PDFs del Catálogo</h2>
-
-            <div class="toggle-container">
-                <span class="toggle-label text-gold font-bold">Enviar PDFs después del menú:</span>
-                <div class="opcion-toggle" id="togglePdfsCatalogo" onclick="togglePdfsCatalogo()"></div>
-                <span id="estadoPdfsCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
-            </div>
-
-            <div class="file-input-container">
-                <label class="file-input-label">
-                    <span class="material-icons" style="vertical-align: middle;">upload_file</span> Agregar PDF
-                    <input type="file" id="pdfCatalogoFile" accept=".pdf,application/pdf" onchange="subirPdfCatalogo()">
-                </label>
-            </div>
-
-            <div class="form-group" style="margin-top: 15px;">
-                <input type="text" id="pdfCatalogoDesc" placeholder="Descripción del PDF (opcional)">
-            </div>
-
-            <div class="pdfs-grid" id="pdfsGrid"
-                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
-                <!-- Filled by JS -->
-            </div>
-        </div>
-
-        <!-- Configuración General -->
-        <div class="card">
-            <h2><span class="material-icons">settings</span> Configuración General</h2>
-
-            <div class="form-group">
-                <label>💬 Mensaje de Saludo Inicial:</label>
-                <textarea id="saludo_inicial" rows="3" placeholder="Soy Yesid de Wimpy..."
-                    style="border-color: var(--primary-gold);"></textarea>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>🚫 Números Bloqueados:</label>
-                    <div id="numerosBloquedosList" style="margin-bottom: 10px;"></div>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="nuevoNumeroBloqueado" placeholder="Ej: 3012345678">
-                        <button class="btn btn-warning" onclick="agregarNumeroBloqueado()">➕</button>
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Acciones</div>
+                <a href="#" onclick="if(window.confirm('Ir al dashboard para reconectar?')) window.location.href='/'"
+                    class="nav-item warning">
+                    <span class="material-icons">power_settings_new</span>
+                    <span>Reconectar</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">👤</div>
+                    <div class="user-details">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Restaurante</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Información Empresa -->
-        <div class="card">
-            <h2><span class="material-icons">store</span> Información de la Empresa</h2>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>Nombre:</label>
-                    <input type="text" id="empresa_nombre">
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="top-header">
+                <div class="header-toggle">
+                    <span class="material-icons">menu</span>
                 </div>
-                <div class="form-group">
-                    <label>Teléfono:</label>
-                    <input type="text" id="empresa_telefono">
+                <div class="header-title">
+                    <h1>Editor de Mensajes</h1>
+                    <span class="status-indicator" id="headerStatus">Configuración</span>
                 </div>
-                <div class="form-group">
-                    <label>Dirección:</label>
-                    <input type="text" id="empresa_direccion">
+                <div class="header-actions">
+                    <button class="btn" onclick="guardarTodo()"
+                        style="background: var(--primary-gold); color: var(--bg-dark); padding: 8px 15px;">
+                        <span class="material-icons" style="font-size: 1.2em; vertical-align: middle;">save</span>
+                        Guardar
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label>Maps Link:</label>
-                    <input type="text" id="empresa_maps">
+            </header>
+
+            <div class="dashboard-content-grid" style="display: block; padding: 20px;">
+                <div class="editor-container" style="max-width: 100%; padding: 0;">
+                    <div class="header text-center mb-10">
+                        <h1
+                            style="font-size: 2.5em; color: var(--primary-gold); text-shadow: 0 0 20px rgba(212,175,53,0.3);">
+                            📝 Editor Completo del Bot
+                        </h1>
+                        <p class="text-muted">Personaliza todo: audio, fotos, opciones y configuración ⚡</p>
+                    </div>
+
+                    <div class="nav-buttons">
+                        <button class="btn" onclick="window.location.href='/'"
+                            style="background: rgba(255,255,255,0.1);">
+                            <span class="material-icons" style="vertical-align: middle;">home</span> Volver al Panel
+                        </button>
+                        <button class="btn btn-warning" onclick="cargarDelServidor()">
+                            <span class="material-icons" style="vertical-align: middle;">cloud_download</span> Cargar
+                            del Servidor
+                        </button>
+                        <button class="btn" onclick="guardarTodo()"
+                            style="background: var(--primary-gold); color: var(--bg-dark);">
+                            <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Cambios
+                        </button>
+                    </div>
+
+                    <div id="alertContainer"></div>
+
+                    <!-- Audio de Saludo -->
+                    <div class="card">
+                        <h2><span class="material-icons">mic</span> Audio de Saludo</h2>
+                        <div class="audio-section">
+                            <div class="form-group">
+                                <label>Audio actual:</label>
+                                <div id="audioStatus">
+                                    <p class="text-muted">Cargando...</p>
+                                </div>
+                                <audio id="audioPlayer" class="audio-player" controls
+                                    style="display: none; width: 100%; margin-top: 10px;">
+                                    <source src="/audio/saludo-daniela.ogg" type="audio/ogg">
+                                    Tu navegador no soporta audio.
+                                </audio>
+                            </div>
+                            <div class="file-input-container"
+                                style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                                <label class="file-input-label">
+                                    <span class="material-icons"
+                                        style="vertical-align: middle; font-size: 1.2em;">upload_file</span>
+                                    Seleccionar Audio (OGG/MP3)
+                                    <input type="file" id="audioFile" accept=".ogg,.mp3,audio/ogg,audio/mpeg"
+                                        onchange="subirAudio()">
+                                </label>
+                                <button class="btn btn-warning" onclick="verificarAudio()">🔄 Verificar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fotos del Catálogo -->
+                    <div class="card">
+                        <h2><span class="material-icons">collections</span> Fotos del Catálogo</h2>
+
+                        <div class="toggle-container">
+                            <span class="toggle-label text-gold font-bold">Enviar fotos después del menú:</span>
+                            <div class="opcion-toggle" id="toggleFotosCatalogo" onclick="toggleFotosCatalogo()"></div>
+                            <span id="estadoFotosCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
+                        </div>
+
+                        <div class="file-input-container">
+                            <label class="file-input-label">
+                                <span class="material-icons" style="vertical-align: middle;">add_a_photo</span> Agregar
+                                Foto
+                                <input type="file" id="fotoCatalogoFile" accept="image/*"
+                                    onchange="subirFotoCatalogo()">
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 15px;">
+                            <input type="text" id="fotoCatalogoDesc" placeholder="Descripción de la foto (opcional)">
+                        </div>
+
+                        <div class="fotos-grid" id="fotosGrid"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <!-- PDFs del Catálogo -->
+                    <div class="card">
+                        <h2><span class="material-icons">picture_as_pdf</span> PDFs del Catálogo</h2>
+
+                        <div class="toggle-container">
+                            <span class="toggle-label text-gold font-bold">Enviar PDFs después del menú:</span>
+                            <div class="opcion-toggle" id="togglePdfsCatalogo" onclick="togglePdfsCatalogo()"></div>
+                            <span id="estadoPdfsCatalogo" class="status-badge status-desconectado">❌ Desactivado</span>
+                        </div>
+
+                        <div class="file-input-container">
+                            <label class="file-input-label">
+                                <span class="material-icons" style="vertical-align: middle;">upload_file</span> Agregar
+                                PDF
+                                <input type="file" id="pdfCatalogoFile" accept=".pdf,application/pdf"
+                                    onchange="subirPdfCatalogo()">
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 15px;">
+                            <input type="text" id="pdfCatalogoDesc" placeholder="Descripción del PDF (opcional)">
+                        </div>
+
+                        <div class="pdfs-grid" id="pdfsGrid"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                            <!-- Filled by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Configuración General -->
+                    <div class="card">
+                        <h2><span class="material-icons">settings</span> Configuración General</h2>
+
+                        <div class="form-group">
+                            <label>💬 Mensaje de Saludo Inicial:</label>
+                            <textarea id="saludo_inicial" rows="3" placeholder="Soy Yesid de Wimpy..."
+                                style="border-color: var(--primary-gold);"></textarea>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>🚫 Números Bloqueados:</label>
+                                <div id="numerosBloquedosList" style="margin-bottom: 10px;"></div>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" id="nuevoNumeroBloqueado" placeholder="Ej: 3012345678">
+                                    <button class="btn btn-warning" onclick="agregarNumeroBloqueado()">➕</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Empresa -->
+                    <div class="card">
+                        <h2><span class="material-icons">store</span> Información de la Empresa</h2>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                <input type="text" id="empresa_nombre">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono:</label>
+                                <input type="text" id="empresa_telefono">
+                            </div>
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                <input type="text" id="empresa_direccion">
+                            </div>
+                            <div class="form-group">
+                                <label>Maps Link:</label>
+                                <input type="text" id="empresa_maps">
+                            </div>
+                            <div class="form-group">
+                                <label>Latitud:</label>
+                                <input type="text" id="latitud" placeholder="Ej: 6.458659">
+                            </div>
+                            <div class="form-group">
+                                <label>Longitud:</label>
+                                <input type="text" id="longitud" placeholder="Ej: -75.557275">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vista Previa Menú (WhatsApp Style) -->
+                    <div class="card">
+                        <h2><span class="material-icons">preview</span> Vista Previa del Menú</h2>
+                        <div class="preview-box" id="preview_menu" style="min-height: 200px; color: #e9edef;">
+                            Vista previa...
+                        </div>
+                    </div>
+
+                    <!-- Editor Completo Opciones -->
+                    <div class="card">
+                        <h2><span class="material-icons">list_alt</span> Gestión de Opciones</h2>
+                        <div id="opcionesMenuContainer"></div>
+                    </div>
+
+                    <!-- Configuración Bot -->
+                    <div class="card">
+                        <h2><span class="material-icons">smart_toy</span> Configuración del Bot</h2>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>⏰ Cooldown (min):</label>
+                                <input type="number" id="cooldown">
+                            </div>
+                            <div class="form-group">
+                                <label>💬 Mensaje Derivación:</label>
+                                <input type="text" id="msg_texto_libre">
+                            </div>
+                            <!-- Hidden legacy field -->
+                            <textarea id="horario" style="display:none;"></textarea>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <button class="btn" onclick="guardarTodo()"
+                            style="background: var(--primary-gold); color: var(--bg-dark); font-size: 1.2em; padding: 15px 40px; box-shadow: 0 0 20px rgba(212,175,53,0.4);">
+                            <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Todo
+                        </button>
+                    </div>
+
                 </div>
             </div>
-        </div>
-
-        <!-- Vista Previa Menú (WhatsApp Style) -->
-        <div class="card">
-            <h2><span class="material-icons">preview</span> Vista Previa del Menú</h2>
-            <div class="preview-box" id="preview_menu" style="min-height: 200px; color: #e9edef;">
-                Vista previa...
-            </div>
-        </div>
-
-        <!-- Editor Completo Opciones -->
-        <div class="card">
-            <h2><span class="material-icons">list_alt</span> Gestión de Opciones</h2>
-            <div id="opcionesMenuContainer"></div>
-        </div>
-
-        <!-- Configuración Bot -->
-        <div class="card">
-            <h2><span class="material-icons">smart_toy</span> Configuración del Bot</h2>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>⏰ Cooldown (min):</label>
-                    <input type="number" id="cooldown">
-                </div>
-                <div class="form-group">
-                    <label>💬 Mensaje Derivación:</label>
-                    <input type="text" id="msg_texto_libre">
-                </div>
-                <!-- Hidden legacy field -->
-                <textarea id="horario" style="display:none;"></textarea>
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 40px;">
-            <button class="btn" onclick="guardarTodo()"
-                style="background: var(--primary-gold); color: var(--bg-dark); font-size: 1.2em; padding: 15px 40px; box-shadow: 0 0 20px rgba(212,175,53,0.4);">
-                <span class="material-icons" style="vertical-align: middle;">save</span> Guardar Todo
-            </button>
-        </div>
-
+        </main>
     </div>
 
     <!-- Scripts -->
     <script>
+        // Sidebar Toggle
+        const toggleBtn = document.querySelector('.header-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                document.querySelector('.sidebar').classList.toggle('active');
+            });
+        }
+
         const API_URL = window.location.origin;
         let configActual = null;
 
@@ -583,6 +668,8 @@
             document.getElementById('empresa_telefono').value = c.empresa_telefono || '';
             document.getElementById('empresa_direccion').value = c.empresa_direccion || '';
             document.getElementById('empresa_maps').value = c.empresa_maps || '';
+            document.getElementById('latitud').value = c.latitud || '6.458659';
+            document.getElementById('longitud').value = c.longitud || '-75.557275';
             document.getElementById('saludo_inicial').value = c.saludo_inicial || '';
             document.getElementById('cooldown').value = c.cooldown || 60;
             document.getElementById('msg_texto_libre').value = c.msg_texto_libre || '';
@@ -615,7 +702,7 @@
                         </div>
                         <div class="form-group">
                              <label>Contenido:</label>
-                             <textarea onchange="actualizarContenidoOpcion(${op.id}, this.value)">${config[op.campo_config] || ''}</textarea>
+                             <textarea style="min-height: 200px;" onchange="actualizarContenidoOpcion(${op.id}, this.value)">${config[op.campo_config] || ''}</textarea>
                         </div>
                     </div>
                 `;
@@ -663,11 +750,23 @@
         function renderizarNumerosBloqueados(nums) {
             const div = document.getElementById('numerosBloquedosList');
             div.innerHTML = '';
-            nums.forEach(n => {
-                div.innerHTML += `<div style="background:rgba(255,0,0,0.1); padding:5px; margin-bottom:5px; border-radius:5px; display:flex; justify-content:space-between;">
-                    ${n} <button onclick="eliminarNumeroBloqueado('${n}')">❌</button>
+            nums.forEach((n, index) => {
+                div.innerHTML += `<div style="background:rgba(255,0,0,0.1); padding:10px; margin-bottom:10px; border-radius:8px; display:flex; align-items:center; gap: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                    <span class="material-icons" style="color: #ef4444; font-size: 1.2em;">block</span>
+                    <input type="text" value="${n}" 
+                           style="background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.2); color: white; width: 100%; padding: 5px; font-family: monospace; font-size: 1.1em;" 
+                           onchange="actualizarNumeroBloqueado(${index}, this.value)"
+                           placeholder="Número">
+                    <button class="btn btn-warning" style="padding: 5px 10px; min-width: auto;" onclick="eliminarNumeroBloqueado(${index})">
+                        <span class="material-icons" style="font-size: 1.2em;">delete</span>
+                    </button>
                 </div>`;
             });
+        }
+
+        function actualizarNumeroBloqueado(index, valor) {
+            // Actualizar el valor en el array
+            configActual.numeros_bloqueados[index] = valor;
         }
 
         function agregarNumeroBloqueado() {
@@ -680,8 +779,10 @@
             }
         }
 
-        function eliminarNumeroBloqueado(n) {
-            configActual.numeros_bloqueados = configActual.numeros_bloqueados.filter(x => x !== n);
+        function eliminarNumeroBloqueado(index) {
+            // Eliminar por índice para evitar confusiones
+            if (!confirm('¿Eliminar este número de la lista de bloqueados?')) return;
+            configActual.numeros_bloqueados.splice(index, 1);
             renderizarNumerosBloqueados(configActual.numeros_bloqueados);
         }
 
@@ -691,6 +792,8 @@
             configActual.empresa_telefono = document.getElementById('empresa_telefono').value;
             configActual.empresa_direccion = document.getElementById('empresa_direccion').value;
             configActual.empresa_maps = document.getElementById('empresa_maps').value;
+            configActual.latitud = document.getElementById('latitud').value;
+            configActual.longitud = document.getElementById('longitud').value;
             configActual.saludo_inicial = document.getElementById('saludo_inicial').value;
             configActual.cooldown = document.getElementById('cooldown').value;
             configActual.msg_texto_libre = document.getElementById('msg_texto_libre').value;

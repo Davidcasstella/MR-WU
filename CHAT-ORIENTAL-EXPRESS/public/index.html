@@ -156,25 +156,69 @@
                     </div>
                 </div>
 
-                <!-- Cooldown Users -->
+                <!-- Users Management Card -->
                 <div class="content-card users-card">
                     <div class="card-header">
                         <h2>
                             <span class="material-icons text-gold">block</span>
-                            Usuarios Bloqueados
+                            Usuarios
                         </h2>
-                        <button class="btn-icon" onclick="resetearTodosCooldowns()" title="Resetear Todos">
-                            <span class="material-icons">refresh</span>
-                        </button>
+                        <div class="tabs-header" style="display: flex; gap: 10px;">
+                            <button id="tab-btn-blocked" class="tab-btn active" onclick="cambiarTab('blocked')"
+                                style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px; border-bottom: 2px solid transparent;">Bloqueados</button>
+                            <button id="tab-btn-cooldown" class="tab-btn" onclick="cambiarTab('cooldown')"
+                                style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 5px; border-bottom: 2px solid transparent;">Cooldown</button>
+                        </div>
                     </div>
-                    <div class="card-body" id="usersList">
-                        <div class="empty-state">
-                            <span class="material-icons"
-                                style="font-size: 3em; color: var(--glass-border); display: block; margin-bottom: 10px;">sentiment_satisfied</span>
-                            No hay usuarios en cooldown
+
+                    <div class="card-body">
+                        <!-- Tab: Blocked -->
+                        <div id="tab-blocked" style="display: block;">
+                            <div class="add-user-row" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <input type="text" id="nuevoBloqueado" placeholder="57300..."
+                                    style="flex: 1; padding: 8px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                                <button class="btn-icon" onclick="agregarBloqueado()"
+                                    style="background: var(--primary-gold); color: black; border-radius: 5px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="material-icons">add</span>
+                                </button>
+                            </div>
+                            <div id="listaBloqueados" class="users-list" style="max-height: 200px; overflow-y: auto;">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Tab: Cooldown -->
+                        <div id="tab-cooldown" style="display: none;">
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                                <button class="btn-text" onclick="resetearTodosCooldowns()" style="font-size: 0.8em;">♻️
+                                    Resetear Todos</button>
+                            </div>
+                            <div id="usersList" class="users-list">
+                                <div class="empty-state">No hay usuarios en cooldown</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <style>
+                    /* Tab Styles */
+                    .tab-btn.active {
+                        color: var(--primary-gold) !important;
+                        border-bottom-color: var(--primary-gold) !important;
+                        font-weight: bold;
+                    }
+
+                    .user-item-blocked {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 8px;
+                        background: rgba(255, 0, 0, 0.1);
+                        border-radius: 5px;
+                        margin-bottom: 5px;
+                        font-size: 0.9em;
+                    }
+                </style>
 
                 <!-- Logs -->
                 <div class="content-card logs-card">

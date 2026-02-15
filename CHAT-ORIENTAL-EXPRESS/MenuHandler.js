@@ -213,6 +213,9 @@ class MenuHandler {
       if (campoConfig === 'ubicacion') {
         await this.enviarUbicacion(from, config);
         console.log(`✅ Ubicación enviada a ${telefono}`);
+      } else if (campoConfig === 'catalogo_iphones') {
+        // Opción 1: Enviar fotos del catálogo en lugar de texto
+        await this.enviarFotosCatalogo(from, telefono);
       } else if (contenido) {
         await this.sock.sendMessage(from, { text: contenido });
         console.log(`✅ ${opcionSeleccionada.nombre} enviado a ${telefono}`);
@@ -235,10 +238,15 @@ class MenuHandler {
 
     // Ubicación GPS
     await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Usar coordenadas de config si existen, si no, usar las predeterminadas
+    const latitud = config.latitud || 6.458659;
+    const longitud = config.longitud || -75.557275;
+
     await this.sock.sendMessage(from, {
       location: {
-        degreesLatitude: 5.703065466839204,
-        degreesLongitude: -72.94070205181986
+        degreesLatitude: latitud,
+        degreesLongitude: longitud
       }
     });
 
@@ -247,6 +255,42 @@ class MenuHandler {
     await this.sock.sendMessage(from, {
       text: `🗺️ También puedes verlo aquí:\n${config.empresa_maps}\n\n📞 Teléfono: ${config.empresa_telefono}`
     });
+  }
+
+  async enviarFotosCatalogo(from, telefono) {
+    try {
+      const fotos = this.configManager.obtenerFotosCatalogo();
+
+      if (fotos.length === 0) {
+        await this.sock.sendMessage(from, { text: '📋 Menú no disponible aún.' });
+        console.log(`⚠️ No hay fotos del catálogo para enviar`);
+        return;
+      }
+
+      console.log(`📸 Enviando ${fotos.length} fotos del menú a ${telefono}...`);
+
+      for (const foto of fotos) {
+        const rutaFoto = path.join(__dirname, 'imagenes', 'catalogo', foto.filename);
+
+        if (fs.existsSync(rutaFoto)) {
+          const imageBuffer = fs.readFileSync(rutaFoto);
+
+          await this.sock.sendMessage(from, {
+            image: imageBuffer,
+            caption: foto.descripcion || ''
+          });
+
+          console.log(`  ✅ Foto enviada: ${foto.filename}`);
+          await new Promise(resolve => setTimeout(resolve, 800));
+        } else {
+          console.log(`  ⚠️ Foto no encontrada: ${foto.filename}`);
+        }
+      }
+
+      console.log(`✅ Fotos del menú enviadas a ${telefono}`);
+    } catch (error) {
+      console.error('❌ Error enviando fotos del catálogo:', error.message);
+    }
   }
 
   esComandoInicio(text) {

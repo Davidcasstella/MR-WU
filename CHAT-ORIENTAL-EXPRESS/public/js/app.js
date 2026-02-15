@@ -20,6 +20,9 @@ async function actualizarEstado() {
         document.getElementById('miNumero').textContent = data.miNumero || 'No disponible';
 
         actualizarListaUsuarios(data.usuariosEnCooldown || []);
+        if (window.actualizarListaBloqueados) {
+            actualizarListaBloqueados(data.numerosBloqueados || []);
+        }
 
         agregarLog('Estado actualizado correctamente');
     } catch (error) {
@@ -55,3 +58,55 @@ window.onload = function () {
         }
     }, 3000);
 };
+
+// ==================== GESTIÓN DE BLOQUEOS ====================
+
+async function agregarBloqueado() {
+    const input = document.getElementById('nuevoBloqueado');
+    const telefono = input.value.trim();
+
+    if (!telefono) return;
+
+    try {
+        const response = await fetch(`${API_URL}/block-number`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telefono })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            mostrarAlerta(`🚫 Bloqueado: ${telefono}`, 'success');
+            agregarLog(`Usuario bloqueado: ${telefono}`);
+            input.value = '';
+            actualizarEstado(); // Recargar lista inmediatamente
+        } else {
+            mostrarAlerta(data.error || 'Error al bloquear', 'error');
+        }
+    } catch (error) {
+        mostrarAlerta('Error de conexión', 'error');
+    }
+}
+
+async function eliminarBloqueado(telefono) {
+    if (!confirm(`¿Desbloquear a ${telefono}?`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/unblock-number`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ telefono })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            mostrarAlerta(`✅ Desbloqueado: ${telefono}`, 'success');
+            agregarLog(`Usuario desbloqueado: ${telefono}`);
+            actualizarEstado(); // Recargar lista inmediatamente
+        } else {
+            mostrarAlerta(data.error || 'Error al desbloquear', 'error');
+        }
+    } catch (error) {
+        mostrarAlerta('Error de conexión', 'error');
+    }
+}
