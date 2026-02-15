@@ -113,6 +113,14 @@ class WhatsAppConnection {
 
   async manejarMensajesEntrantes(m) {
     try {
+      // Log inicial para depuración
+      if (m.messages && m.messages.length > 0) {
+        const msg = m.messages[0];
+        if (msg.key) {
+          console.log(`📥 Evento recibido: ${m.type} | JID: ${msg.key.remoteJid} | ID: ${msg.key.id}`);
+        }
+      }
+
       if (m.type !== 'notify') return;
 
       const msg = m.messages[0];
@@ -120,13 +128,17 @@ class WhatsAppConnection {
 
       // Filtrar: solo procesar mensajes de chats individuales
       const remoteJid = msg.key.remoteJid;
-      if (!remoteJid || !remoteJid.endsWith('@s.whatsapp.net')) {
-        return; // Ignora status@broadcast, grupos @g.us, y cualquier otro
+      const esChatIndividual = remoteJid && (remoteJid.endsWith('@s.whatsapp.net') || remoteJid.endsWith('@lid'));
+
+      if (!esChatIndividual) {
+        // console.log('Ignorando mensaje de grupo o broadcast:', remoteJid);
+        return;
       }
 
       await this.messageProcessor.procesarMensaje(msg, this.miNumero);
     } catch (error) {
       console.error('❌ Error procesando mensaje:', error.message);
+      console.error(error); // Ver stack trace completo
     }
   }
 

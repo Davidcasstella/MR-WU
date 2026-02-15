@@ -9,28 +9,51 @@ class MessageProcessor {
 
   async procesarMensaje(msg, miNumero) {
     try {
-      if (msg.key.fromMe) return;
+      // if (msg.key.fromMe) return; // Allow owner to interact with bot
 
       const from = msg.key.remoteJid;
       const messageId = msg.key.id;
 
       // Solo procesar chats individuales (segunda capa de defensa)
-      if (!from || !from.endsWith('@s.whatsapp.net')) return;
+      if (!from || (!from.endsWith('@s.whatsapp.net') && !from.endsWith('@lid'))) return;
 
-      // Validar que no sea mi propio número
+      // Validar que no sea mi propio número (Disabled to allow testing)
+      /*
       const remitente = from.split('@')[0];
       if (miNumero && remitente === miNumero) {
         console.log('⛔ Ignorando mensaje de mi propio número');
         return;
       }
+      */
 
       // Verificar duplicados
       if (this.cooldownManager.esMensajeDuplicado(from, messageId)) {
         return;
       }
 
+      // Desempaquetar mensaje (manejo de mensajes efímeros/viewOnce comunes en celular)
+      let messageContent = msg.message;
+
+      if (messageContent?.ephemeralMessage?.message) {
+        console.log('📦 Desempaquetando ephemeralMessage');
+        messageContent = messageContent.ephemeralMessage.message;
+      }
+
+      if (messageContent?.viewOnceMessage?.message) {
+        console.log('📦 Desempaquetando viewOnceMessage');
+        messageContent = messageContent.viewOnceMessage.message;
+      }
+
+      if (messageContent?.documentWithCaptionMessage?.message) {
+        console.log('📦 Desempaquetando documentWithCaptionMessage');
+        messageContent = messageContent.documentWithCaptionMessage.message;
+      }
+
+      // Log para depuración
+      console.log('📨 Keys del mensaje:', Object.keys(messageContent));
+
       // ========== DETECTAR AUDIO ==========
-      const esAudio = !!(msg.message.audioMessage || msg.message.ptt);
+      const esAudio = !!(messageContent.audioMessage || messageContent.ptt);
 
       if (esAudio) {
         const telefono = from.split('@')[0];
@@ -50,15 +73,20 @@ class MessageProcessor {
         return;
       }
 
-      // Extraer texto del mensaje
-      const text = (msg.message.conversation ||
-        msg.message.extendedTextMessage?.text || '').trim();
+      // Extraer texto del mensaje (Soporte mejorado)
+      const text = (
+        messageContent.conversation ||
+        messageContent.extendedTextMessage?.text ||
+        messageContent.imageMessage?.caption ||
+        messageContent.videoMessage?.caption ||
+        ''
+      ).trim();
 
       const telefono = from.split('@')[0];
       console.log(`\n📩 Mensaje de ${telefono}: ${text}`);
 
       // ========== DETECTAR SI ES RESPUESTA/CITA A UN MENSAJE ==========
-      const esRespuestaAMensaje = !!(msg.message.extendedTextMessage?.contextInfo?.quotedMessage);
+      const esRespuestaAMensaje = !!(messageContent.extendedTextMessage?.contextInfo?.quotedMessage);
 
       if (esRespuestaAMensaje) {
         console.log(`💬 Es una respuesta a un mensaje citado`);
