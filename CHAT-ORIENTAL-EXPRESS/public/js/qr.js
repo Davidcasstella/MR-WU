@@ -6,7 +6,7 @@ let ultimoQR = null;
 let ultimoEstadoConectado = null;
 
 /**
- * Obtiene el código QR del servidor y lo renderiza
+ * Obtiene el código QR del servidor y lo renderizaa
  */
 async function obtenerQR() {
     try {
