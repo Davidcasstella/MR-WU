@@ -231,9 +231,9 @@ class MenuHandler {
   }
 
   async enviarUbicacion(from, config) {
-    // Mensaje de texto con dirección
+    // Mensaje de texto con dirección (Usar config.ubicacion que contiene el texto editado por el usuario)
     await this.sock.sendMessage(from, {
-      text: `📍 *${config.empresa_nombre}*\n\n${config.empresa_direccion}\n\n${config.horario}`
+      text: config.ubicacion || `📍 *${config.empresa_nombre}*\n\n${config.empresa_direccion}\n\n${config.horario}`
     });
 
     // Ubicación GPS

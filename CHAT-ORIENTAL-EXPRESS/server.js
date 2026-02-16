@@ -198,6 +198,12 @@ app.post('/update-config', (req, res) => {
       newConfig.pdfs_catalogo.pdfs = currentConfig.pdfs_catalogo.pdfs;
       console.log(`🛡️ Preservando ${newConfig.pdfs_catalogo.pdfs.length} PDFs del catálogo`);
     }
+
+    // 3. Preservar Números Bloqueados (Safety Net)
+    if (!newConfig.numeros_bloqueados && currentConfig.numeros_bloqueados) {
+      newConfig.numeros_bloqueados = currentConfig.numeros_bloqueados;
+      console.log(`🛡️ Preservando ${newConfig.numeros_bloqueados.length} números bloqueados`);
+    }
     // ------------------------------------------------------------------
 
     const guardado = configManager.guardarConfiguracion(newConfig);

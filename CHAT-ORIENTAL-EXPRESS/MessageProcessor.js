@@ -174,9 +174,8 @@ class MessageProcessor {
             // Procesar la opción (sequential mapping)
             await this.menuHandler.procesarOpcionMenu(from, text, telefono);
           } else {
-            await this.sock.sendMessage(from, {
-              text: `⚠️ Esa opción no está disponible.\n\n${this.configManager.obtenerConfig().menu_principal}`
-            });
+            // Opción numérica pero fuera de rango -> Derivar a asesor
+            await this.derivarAsesor(from, telefono);
           }
         }
         // ========== SI ESCRIBIÓ TEXTO LIBRE ==========
@@ -192,12 +191,8 @@ class MessageProcessor {
             // ========== TEXTO LIBRE O INTERROGANTE - DERIVAR A ASESOR ==========
             await this.derivarAsesor(from, telefono);
           } else {
-            // Es un número pero no válido (ej: 8, 9, 10, etc)
-            const opcionesActivas = this.configManager.obtenerOpcionesActivas();
-            const numerosValidos = opcionesActivas.map((op, i) => i + 1).join(', ');
-            await this.sock.sendMessage(from, {
-              text: `⚠️ Por favor escribe una opción válida (${numerosValidos}):\n\n${this.configManager.obtenerConfig().menu_principal}`
-            });
+            // Es un número pero no reconocido como opción (ej: 8, 9, 0 si no está en rango) -> Derivar a asesor
+            await this.derivarAsesor(from, telefono);
           }
         }
 
@@ -219,9 +214,8 @@ class MessageProcessor {
           if (numEscrito >= 1 && numEscrito <= opcionesActivas.length) {
             await this.menuHandler.procesarOpcionMenu(from, text, telefono);
           } else {
-            await this.sock.sendMessage(from, {
-              text: `⚠️ Esa opción no está disponible.\n\n${this.configManager.obtenerConfig().menu_principal}`
-            });
+            // Opción fuera de rango -> Derivar a asesor
+            await this.derivarAsesor(from, telefono);
           }
         } else {
           // ========== TEXTO LIBRE - DERIVAR SIN REPETIR MENÚ ==========

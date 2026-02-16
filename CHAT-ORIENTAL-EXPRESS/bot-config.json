@@ -4,9 +4,9 @@
   "empresa_direccion": "San Pedro de los Milagros, Antioquia",
   "empresa_maps": "https://maps.app.goo.gl/HgMw3o1vX5v87GNs5",
   "cooldown": "60",
-  "msg_texto_libre": "Vale ya te respondo",
-  "saludo_inicial": "Soy Mile de ORIENTAL-EXPRESS😊",
-  "menu_principal": "Soy Mile de ORIENTAL-EXPRESS😊\n\n1. 🍔 Conocer nuestro menú  \n2. 💳  *Medios de pago disponibles*\n3. 📍 UBICACIÓN Y HORARIOS\n4. 📦 Para llevar\n\nEscribe el número de tu opción",
+  "msg_texto_libre": "ok",
+  "saludo_inicial": "Soy Mile de ORIENTAL-EXPRESS😊\n🌐 Para hacer tu pedido, ordena a través de nuestra página web:\n👉 https://publuu.com/flip-book/1060606/2357047",
+  "menu_principal": "Soy Mile de ORIENTAL-EXPRESS😊\n🌐 Para hacer tu pedido, ordena a través de nuestra página web:\n👉 https://publuu.com/flip-book/1060606/2357047\n\n1. 🍔 Conocer nuestro menú  \n2. 💳  *Medios de pago disponibles*\n3. 📍 UBICACIÓN Y HORARIOS\n4. 📦 Para llevar\n\nEscribe el número de tu opción",
   "catalogo_iphones": "🥢 MENÚ ORIENTAL EXPRESS\n🥬 CHOPSUEY\n\nVerduras salteadas al wok en salsa soya\n\nChopsuey mixto — $25.000 / $34.000 / $43.000\n\nChopsuey camarón — $33.000 / $46.000\n\nChopsuey pollo-camarón — $33.000 / $46.000\n\nChopsuey pollo — $25.000 / $34.000 / $43.000\n\nChopsuey vegetal — $20.000 / $28.000\n\n🍝 SPAGUETTIS\n\nPastas salteadas al wok en tomate o soya\n\nSpaguetti mixto — $25.000 / $34.000 / $43.000\n\nSpaguetti camarón — $33.000 / $46.000\n\nSpaguetti pollo-camarón — $33.000 / $46.000\n\nSpaguetti pollo — $25.000 / $34.000 / $43.000\n\nLomain mixto — $25.000 / $34.000\n\n🍜 CHOWMAIN\n\nMix de verduras y pastas al wok\n\nChowmain mixto — $25.000 / $34.000 / $43.000\n\nChowmain camarón — $33.000 / $46.000\n\nChowmain pollo-camarón — $33.000 / $46.000\n\nChowmain pollo — $25.000 / $34.000 / $43.000\n\nChowmain vegetal — $20.000 / $28.000\n\n🍚 ARROZ CHINO\n\nArroz al wok, cebollín y raíz china\n\nArroz mixto tradicional — $25.000 / $34.000 / $43.000\n\nArroz camarón — $33.000 / $46.000\n\nArroz pollo-camarón — $33.000 / $46.000\n\nArroz pollo — $25.000 / $34.000 / $43.000\n\nArroz vegetal — $20.000 / $28.000\n\n🍗 ARROZ CHINO VALENCIANA\n\nArroz mixto + 1/4 pollo frito — $35.000\n\nArroz mixto + 1/2 pollo frito — $48.000\n\nArroz mixto + pollo entero — $60.000\n\n🍱 COMBINADOS\n\nArroz mixto + chopsuey — $30.000\n\nArroz mixto + chopsuey + alitas — $34.000\n\nArroz mixto + 1/4 pollo + papas — $30.000\n\n➕ ADICIONES\n\nUnidad alita apanada — $4.500\n\nPorción de camarón — $30.000\n\nPollo entero — $38.000\n\nPapa francesa — $11.000\n\n🥤 BEBIDAS\n\nCoca-Cola Mega — $14.000\n\nCoca-Cola 1.5L — $11.000\n\nCoca-Cola 400ml — $5.500\n\nCoca-Cola 250ml — $4.000\n\nPremio/Quatro 1.5 — $9.000\n\nPostobón 1.5 — $9.000\n\nPostobón mini — $5.500\n\nHit caja litro — $8.000\n\nHit 500ml — $6.500\n\nPony Malta L — $7.000\n\nAgua botella 600ml — $3.500",
   "accesorios_iphone": "🔥 COMBO 1 – PAREJA EXPRESS\n\nArroz mixto tradicional\n\nChopsuey pollo\n\n2 Gaseosas 400ml\n💰 $45.000\n\n🔥 COMBO 2 – FAMILIAR CLÁSICO\n\nArroz mixto grande\n\nChowmain pollo\n\n4 Alitas apanadas\n\nGaseosa 1.5L\n💰 $79.000\n\n🔥 COMBO 3 – MAR Y TIERRA\n\nArroz camarón\n\nSpaguetti pollo-camarón\n\n2 Gaseosas 400ml\n💰 $69.000\n\n🔥 COMBO 4 – FULL POLLO\n\nArroz mixto + 1/4 pollo\n\nPorción de papas francesas\n\nGaseosa 1.5L\n💰 $49.000\n\n🔥 COMBO 5 – COMBO PERSONAL\n\nChowmain mixto\n\n1 Alita apanada\n\nGaseosa 250ml\n💰 $29.900",
   "catalogo_macbooks": "💳 Métodos de pago disponibles:\n💵 Efectivo\n📲 Nequi\n📲 Daviplata\n🏦 Transferencia bancaria\n\n📞 Realiza tu pedido al:\n305 767 0249",
@@ -60,10 +60,12 @@
       "campo_config": "garantia"
     }
   ],
-  "numeros_bloqueados": [],
+  "numeros_bloqueados": [
+    "573028599105"
+  ],
   "bloquear_extranjeros": true,
   "nombre_asesor": "Yesid",
-  "ubicacion": "📍ORIENTAL-EXPRESS\n\nSan Pedro de los Milagros, Antioquia\n\n⏰ *Horario*\nLunes a Sábado: 7:00 AM - 8:00 PM\nDomingos: 8:00 AM - 11:00 AM",
+  "ubicacion": "📍ORIENTAL-EXPRESS\n\nSan Pedro de los Milagros, Antioquia\n⏰ *Horario*\nLunes a Domingos: 12:00 AM - 8:00 PM\n",
   "fotos_catalogo": {
     "habilitado": true,
     "fotos": [

@@ -799,6 +799,20 @@
             configActual.msg_texto_libre = document.getElementById('msg_texto_libre').value;
             configActual.horario = document.getElementById('horario').value;
 
+            // --- FIX: Auto-agregar número bloqueado si quedó escrito en el input ---
+            const inputBloqueado = document.getElementById('nuevoNumeroBloqueado');
+            if (inputBloqueado && inputBloqueado.value.trim() !== '') {
+                const num = inputBloqueado.value.trim();
+                if (!configActual.numeros_bloqueados) configActual.numeros_bloqueados = [];
+                // Solo agregar si no existe ya
+                if (!configActual.numeros_bloqueados.includes(num)) {
+                    configActual.numeros_bloqueados.push(num);
+                    console.log('✅ Número pendiente agregado automáticamente:', num);
+                }
+                inputBloqueado.value = ''; // Limpiar input
+            }
+            // -----------------------------------------------------------------------
+
             try {
                 const res = await fetch(`${API_URL}/update-config`, {
                     method: 'POST',
